@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hetch-translator-deployment
+  labels:
+    app: hetch-translator
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hetch-translator
+  template:
+    metadata:
+      labels:
+        app: hetch-translator
+    spec:
+      containers:
+      - name: hetch-translator
+        image: registry.digitalocean.com/hetchfundcapital/translator:latest
+        ports:
+        - containerPort: 4001
+      imagePullSecrets:
+        - name: do-registry

@@ -1,0 +1,56 @@
+# template from "rmorshea/docker-flask-template"
+version: '3.7'
+
+services:
+  hetch_accounts:
+    build: ../hetch-accounts
+    restart: always
+    environment:
+      ENVIRONMENT: staging
+      SELF_ENDPOINT: https://apis.staging.hetchfund.capital/accounts
+
+      # ENV values from the -override bash file.
+      ARANGO_URL: ${ARANGO_HOST}
+      ARANGO_USERNAME: ${ARANGO_USERNAME}
+      ARANGO_PASSWORD: ${ARANGO_PASSWORD}
+      DATABASE_NAME: hetchfund_capital_staging
+      SEED: ${SEED}
+    expose:
+      - 4000
+
+  hetch_payments:
+    build: ../hetch-payments
+    restart: always
+    environment:
+      ENVIRONMENT: staging
+      SELF_ENDPOINT: https://apis.staging.hetchfund.capital/payments
+
+      # ENV values from the -override bash file.
+      PEACH_3D_ENTITY_ID: ${PEACH_3D_ENTITY_ID}
+      PEACH_AUTHORIZATION: ${PEACH_AUTHORIZATION}
+      PEACH_ENDPOINT: ${PEACH_ENDPOINT}
+      # DATABASE ENV values
+      ARANGO_URL: ${ARANGO_HOST}
+      ARANGO_USERNAME: ${ARANGO_USERNAME}
+      ARANGO_PASSWORD: ${ARANGO_PASSWORD}
+      DATABASE_NAME: hetchfund_capital_staging
+    expose:
+      - 4001
+
+  hetch_translator:
+    build: ../hetch-translator
+    restart: always
+    environment:
+      ENVIRONMENT: staging
+
+      # ENV values from the -override file.
+      OE_KEY: ${OE_KEY}
+    expose:
+      - 4002
+
+  # NGINX to be used for reverse proxying and serving requests.
+  nginx:
+    build: ../nginx
+    restart: always
+    ports:
+      - "80:80"
