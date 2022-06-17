@@ -40,13 +40,16 @@ services:
   hetch_translator:
     build: ../hetch-translator
     restart: always
+    ports:
+      - 4001
     environment:
       ENVIRONMENT: staging
 
       # ENV values from the -override file.
       OE_KEY: ${OE_KEY}
     expose:
-      - 4002
+      - 4001
+
 
   # NGINX to be used for reverse proxying and serving requests.
   nginx:
