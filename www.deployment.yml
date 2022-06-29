@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: www
+  namespace: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+  labels:
+    app: www
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: www
+  template:
+    metadata:
+      labels:
+        app: www
+    spec:
+      containers:
+      - name: www
+        image: registry.digitalocean.com/hetchfundcapital/www:1.0.0
+        ports:
+        - containerPort: 80
+            
+      imagePullSecrets:
+        - name: do-registry
+
