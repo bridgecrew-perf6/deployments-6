@@ -1,23 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hetch-translator-deployment
+  name: translator
+  namespace: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
   labels:
-    app: hetch-translator
+    app: translator
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: hetch-translator
+      app: translator
   template:
     metadata:
       labels:
-        app: hetch-translator
+        app: translator
     spec:
       containers:
-      - name: hetch-translator
-        image: registry.digitalocean.com/hetchfundcapital/translator
+      - name: translator
+        image: registry.digitalocean.com/hetchfundcapital/translator:latest
         ports:
         - containerPort: 4001
+        env:
+          - name: SELF_ENDPOINT
+            value: https://apis.hetchfund.capital/translator
+
+          - name: OE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: translator-environment
+                key: OE_KEY
       imagePullSecrets:
         - name: do-registry
