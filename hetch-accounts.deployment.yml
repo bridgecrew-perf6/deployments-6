@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts
+  namespace: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+  labels:
+    app: accounts
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: accounts
+  template:
+    metadata:
+      labels:
+        app: accounts
+    spec:
+      containers:
+      - name: accounts
+        image: registry.digitalocean.com/hetchfundcapital/accounts:1.0.02
+        ports:
+        - containerPort: 4000
+        env:
+          - name: SELF_ENDPOINT
+            value: https://apis.hetchfund.capital/accounts
+          
+          - name: MONGODB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: runtime-environment
+                key: MONGODB_HOST
+            
+          - name: DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: runtime-environment
+                key: DATABASE_NAME
+
+          - name: SEED
+            valueFrom:
+              secretKeyRef:
+                name: runtime-environment
+                key: SEED
+            
+      imagePullSecrets:
+        - name: do-registry
+
